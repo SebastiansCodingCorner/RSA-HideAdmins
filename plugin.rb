@@ -8,12 +8,7 @@ module HideAdminNames
 end
 
 after_initialize do
-  class About
-    def admins
-      @admins ||= User.where(admin: true)
-                      .where.not(id: Discourse::SYSTEM_USER_ID)
-                      .where.not(username_lower: HideAdminNames::NAMES_TO_HIDE)
-                      .order(:username_lower)
-    end
+  add_to_serializer(:about, :admins) do
+    object.admins.reject { |u| u.email =~ /@simplydata\.dev/i }
   end
 end
